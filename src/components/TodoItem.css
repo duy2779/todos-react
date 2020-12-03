@@ -1,0 +1,21 @@
+.TodoItem{
+    display: flex;
+    font-weight: 300;
+    font-size: 24px;
+    color: #4d4d4d;
+    padding: 0 20px;
+    cursor: pointer;
+}
+
+.TodoItem img{
+    margin-right:10px;
+}
+
+.TodoItem:not(:last-child){
+    border-bottom: 1px solid #cec9c9;
+}
+
+.TodoItem-complete > p{
+    text-decoration: line-through;
+    opacity: .3;
+}
