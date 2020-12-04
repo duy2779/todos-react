@@ -4,13 +4,14 @@ import TodoItem from './components/TodoItem';
 import tick from './img/check-all.svg';
 
 function App() {
-  let [todoItems, setTodoItems] = useState([
-    { title: 'Go to market', isCompleted: true },
-    { title: 'Text crush', isCompleted: true },
-    { title: 'Blend pictures' },
-  ]);
+  const storageKey = 'Todos';
+  let [todoItems, setTodoItems] = useState(JSON.parse(localStorage.getItem(storageKey)) || []);
 
   let [taskInputText, settaskInputText] = useState('');
+
+  function loadStorage(data) {
+    localStorage.setItem(storageKey, JSON.stringify(data));
+  }
 
   function onItemClicked(item) {
     return (event) => {
@@ -22,7 +23,7 @@ function App() {
         ...todoItems.slice(index + 1)
       ]
       setTodoItems(todoUpdate);
-      console.log(todoUpdate.todoItems);
+      loadStorage(todoUpdate);
     }
   }
 
@@ -37,34 +38,46 @@ function App() {
       text = text.trim();
       if (!text) { return; }
 
-      setTodoItems([
+      let todoUpdate = [
         { title: text, isCompleted: false },
         ...todoItems
-      ]);
+      ]
+      setTodoItems(todoUpdate);
+      loadStorage(todoUpdate);
       settaskInputText('');
     }
   }
 
-  function onChange(event){
+  function onChange(event) {
     let text = event.target.value;
     settaskInputText(text);
+  }
+
+  function onCheckAll() {
+    let todoUpdate = JSON.parse(JSON.stringify(todoItems));
+    for (const item in todoUpdate) {
+      todoUpdate[item].isCompleted = true;
+    }
+    console.log(todoItems);
+    setTodoItems(todoUpdate);
+    loadStorage(todoUpdate);
   }
 
   return (
     <div className="App">
       <div className="todo-list">
         <div className="header">
-          <img src={tick} alt="#" width="25" />
+          <img src={tick} alt="#" width="25" onClick={onCheckAll} />
           <input type="text" placeholder="What needs to be done?" onKeyUp={onKeyUp} value={taskInputText} onChange={onChange} />
         </div>
         {
           todoItems.length > 0 && todoItems.map((item, index) => <TodoItem key={index} item={item} onClick={onItemClicked(item)} />)
         }
         {
-          todoItems.length === 0 && <p>Nothing here</p>
+          todoItems.length === 0 && <p style={{ textAlign: 'center' }}>Nothing here</p>
         }
       </div>
-    </div>
+    </div >
   );
 }
 
